@@ -9,6 +9,7 @@
   "author": "mge",
   "license": "ISC",
   "dependencies": {
-    "puppeteer": "^4.0.1"
+    "puppeteer": "^4.0.1",
+    "xlsx": "^0.16.3"
   }
 }

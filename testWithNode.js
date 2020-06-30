@@ -28,8 +28,8 @@ async function wrapItAll(a, b, processId) {
   // for testing via labamboss
   await page.goto("https://ribosom.labamboss.com/");
 
-  await page.type("#signin_username", "mge");
-  await page.type("#signin_password", "steindia12");
+  await page.type("#signin_username", "");
+  await page.type("#signin_password", "");
 
   await Promise.all([page.click("tfoot input"), page.waitForNavigation()]);
 

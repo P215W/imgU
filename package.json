@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "puppeteer": "^4.0.1",
+    "request": "^2.88.2",
     "xlsx": "^0.16.3"
   }
 }

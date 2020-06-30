@@ -1,0 +1,14 @@
+{
+  "name": "imageuploadautomation",
+  "version": "1.0.0",
+  "description": "-",
+  "main": "index.js",
+  "scripts": {
+    "test": "runTest"
+  },
+  "author": "mge",
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer": "^4.0.1"
+  }
+}

@@ -1,32 +1,13 @@
+const xlsx = require("xlsx");
 const wrapFunc = require("./testWithNode.js");
 
-// const tableObj = {
-//         line1: {
-//             title: "autoTitle1",
-//             formatType: "dr_jergas"
-//         },
-//         line2: {
-//             title: "autoTitle2",
-//             formatType: "dr_merkel"
-//         }
-// };
-
-// const DATA = [
-//     { title: 'titleA', formatType: 'dr_jergas' },
-//     { title: 'titleB', formatType: 'dr_merkel' },
-//     { title: 'titleC', formatType: 'dr_jergas' }
-// ];
-
+// THIS FUNCTION CALLS THE ONE FUNCTION WITHIN TESTWITHNODE-JS-FILE FOR EVERY TABLE ROW (AKA FOR EVERY OBJECT IN THE ONE ARRAY):
 async function processData(obj) {
-  // for (let item in obj) {
   for (let item of obj) {
-    // if (error) {
-    //     break;
-    // }
-    // await wrapFunc.data(tableObj[item].title, tableObj[item].formatType);
     try {
-      // await wrapFunc.data(item.title, item.formatType, item.processId);
-      await wrapFunc.data(item.title, item.formatType, item.processId, item.localImagePath);
+      // await wrapFunc.data(item.title, item.formatType, item.processId, item.localImagePath);
+      await wrapFunc.data(item);
+      console.log("P A T H: ", item.localImagePath);
       console.log(
         `[caller.js] --- Successfully created asset for asset title ${item.title} and processId ${item.processId} ---`
       );
@@ -36,6 +17,13 @@ async function processData(obj) {
     }
   }
   console.log("[caller.js] ---- All Creations DONE! ----");
+  console.log("N E W - O B J: ", obj);
+
+  const newWB = xlsx.utils.book_new();
+  const newWS = xlsx.utils.json_to_sheet(obj);
+  xlsx.utils.book_append_sheet(newWB, newWS, "TestWorksheet444");
+  xlsx.writeFile(newWB, "./Assets/test_Xlsx_After_Asset_Creation.xlsx");
 }
 
+// EXPORTING THE FUNCTION SO THAT WE CAN CALL IT FROM WITHIN TESTXLSX-JS-FILE:
 exports.data = processData;

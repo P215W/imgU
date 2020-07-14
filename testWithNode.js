@@ -1,17 +1,17 @@
 const puppeteer = require("puppeteer");
 
-async function wrapItAll(a, b, processId, localImagePath) {
-  // const variableTitle = process.argv[2];
-  const variableTitle = a;
+// async function wrapItAll(a, b, processId, localImagePath) {
+  async function wrapItAll(itemIsObject) {
+  // const variableTitle = a;
+  const variableTitle = itemIsObject.title;
   if (!variableTitle) {
     throw new Error(
-      `[testWithNode.js] Error: For processId ${processId}, no title was provided!`
+      `[testWithNode.js] Error: For itemIsObject.processId ${itemIsObject.processId}, no title was provided!`
     );
-    // process.exit(1);
   }
 
-  // const variableFormType = process.argv[3];
-  const variableFormType = b;
+  // const variableFormType = b;
+  const variableFormType = itemIsObject.formatType;
   if (!variableFormType) {
     console.error("[testWithNode.js] Error: Please provide a formtype.");
     process.exit(1);
@@ -35,7 +35,7 @@ async function wrapItAll(a, b, processId, localImagePath) {
 
   await Promise.all([
     page.click('[href="/ly_media_asset"]'),
-    page.waitForNavigation(), // test change
+    page.waitForNavigation(),
   ]);
 
   await Promise.all([
@@ -63,7 +63,7 @@ async function wrapItAll(a, b, processId, localImagePath) {
     ]);
 
     // await fileChooser.accept(["./Assets/test123.svg"]);
-    await fileChooser.accept([`${localImagePath}`]);
+    await fileChooser.accept([`${itemIsObject.localImagePath}`]);
   } catch (err) {
     throw new Error(`Error at file picker: ${err}`);
   }
@@ -80,6 +80,11 @@ async function wrapItAll(a, b, processId, localImagePath) {
   await page.screenshot({ path: "screenshot.png" });
   // GET THE NEWLY CREATED ASSETS URL:
   console.log("NEWLY CREATED ASSET URL: ", page.url());
+  itemIsObject.lyMediaUrl = page.url();
+  if (itemIsObject.lyMediaUrl) {
+    itemIsObject.success = true;
+  }
+  console.log("itemIsObject", itemIsObject);
 
   try {
     await browser.close();
@@ -88,4 +93,5 @@ async function wrapItAll(a, b, processId, localImagePath) {
   }
 }
 
+// EXPORTING THE FUNCTION SO THAT WE CAN CALL IT FROM WITHIN CALLER-JS-FILE:
 exports.data = wrapItAll;

@@ -1,35 +1,23 @@
 const xlsx = require("xlsx");
 const callMethod = require("./caller.js");
 
-// normal sheets
-const sheet = xlsx.readFile("./Assets/testXlsx.xlsx").Sheets["Sheet1"];
-// err, miss. titleB
-// const sheet = xlsx.readFile('./Assets/testXlsx_error.xlsx').Sheets["Sheet1"];
-// err, miss. formTypeA and titleB
-// const sheet = xlsx.readFile('./Assets/testXlsx_errorA-B.xlsx').Sheets["Sheet1"];
-
-console.log("[testXlsx.js]", sheet);
+// GET SHEET AND TRANSFORM IT TO JSON (ONE ARRAY OF OBJECTS):
+const sheet = xlsx.readFile("./Assets/testXlsxAfterImageDownload_short.xlsx").Sheets["Tabellenblatt1"];
+console.log("[testXlsx.js]: original sheet: ", sheet);
 const originalData = xlsx.utils.sheet_to_json(sheet);
-// console.log("[testXlsx.js] originalData: ", originalData);
 
-let imageIndexAtLastSuccess;
+// IN CASE WE NEED A MANUAL RESTART AT A HIGHER DATA INDEX IF INITIAL RUN WAS ABORTED
+// IN THAT CASE: PLEASE USE the ID number THAT WAS consoleLOGGED for THE last succesSfull asset creation AS THE VALUE FOR THE LET-VAR IMAGEINDEXATLASTSUCCESS:
+let imageIndexAtLastSuccess; // = XXX; // PLEASE FILL IN the LAST SUCCESSFULL ASSET ID number HERE
 let dataDownTheLine;
-// here is altered data in case of manual re-start at a higher data index:
-// 1. find me the array-index of the object possesing the image-index (='aim index') of last successfull asset creation
-// imageIndexAtLastSuccess = XXX; //FILL IN the ID number from console-log for last succ. creation
-
 if (imageIndexAtLastSuccess !== undefined || null) {
   dataDownTheLine = originalData.slice(
     imageIndexAtLastSuccess,
     originalData.length
   );
 }
-// 2. create a new array where you 'pop' the first indices until the aim index
-// 3. assign that new array to the binding dataDownTheLine
-// dataDownTheLine = xlsx.utils ...
-// console.log("[testXlsx.js]" dataDownTheLine: ", dataDownTheLine);
-
 const data = dataDownTheLine || originalData;
 console.log("[testXlsx.js] data: ", data);
 
-// callMethod.data(data); // we dont call it here, since we arlready call it from getImages.js
+// HAND-OVER THE JSON (THE ONE ARRAY OF OBJECTS) TO THE CALLER-JS-FILE:
+callMethod.data(data);

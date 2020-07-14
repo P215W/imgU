@@ -1,14 +1,15 @@
 const xlsx = require("xlsx");
 const fs = require("fs");
 const requestmodule = require("request");
-const callMethod = require("./caller.js");
+
+const pathToSheetForImageDownload = "./Assets/testXlsx.xlsx";
+const worksheetName = "Sheet1";
 
 // NODE IMAGE CRAWLER FUNCTION:
 const download = function (uri, filename, callback) {
   requestmodule.head(uri, function (err, res, body) {
     console.log("content-type:", res.headers["content-type"]);
     console.log("content-length:", res.headers["content-length"]);
-
     requestmodule(uri)
       .pipe(fs.createWriteStream(filename))
       .on("close", callback);
@@ -16,27 +17,14 @@ const download = function (uri, filename, callback) {
 };
 
 // PARSE SHEET:
-const sheet = xlsx.readFile("./Assets/testXlsx.xlsx").Sheets["Sheet1"];
-const sheetJSON = xlsx.utils.sheet_to_json(sheet);
-console.log("originalData: ", sheetJSON);
+const sheetForImageDownload = xlsx.readFile(`${pathToSheetForImageDownload}`).Sheets[`${worksheetName}`];
+const sheetAsJSON = xlsx.utils.sheet_to_json(sheetForImageDownload);
+console.log("sheetAsJSON: ", sheetAsJSON);
 
 //  LOOP THROUGH ALL ROWS (blank rows are ignored by default) TO GET EACH IMAGE-URL and call download function with url:
 const tableElementsWithMissingImageUrl = [];
-// sheetJSON.forEach(item => {
-//     if (item.imageUrl) {
-//       download(
-//         `${item.imageUrl}`,
-//         `C:/Users/Marc/imageUploadAutomation/Assets/${item.title}_processID${item.processId}.jpg`,
-//         function () {
-//           console.log(`Done with ${item.title}`);
-//         }
-//       );
-//     } else {
-//       tableElementsWithMissingImageUrl.push(item);
-//     }
-// });
 
-const newData = sheetJSON.map(item => {
+const newData = sheetAsJSON.map(item => {
   if (item.imageUrl) {
     download(
       `${item.imageUrl}`,
@@ -54,6 +42,10 @@ const newData = sheetJSON.map(item => {
 console.log("newData: ", newData);
 console.log("Error Array: ", tableElementsWithMissingImageUrl);
 
-callMethod.data(newData);
+// TRANSFORM NEW DATA INTO NEW XLSX-FILE THAT HOLDS THE LOCAL IMAGE PATHS, AND IS THEREFORE USABLE FOR ASSET CREATION:
+const newWB = xlsx.utils.book_new();
+const newWS = xlsx.utils.json_to_sheet(newData);
+xlsx.utils.book_append_sheet(newWB, newWS, "Sheet for asset creation");
+xlsx.writeFile(newWB, "./Assets/testXlsx_useForAssetCreation.xlsx");
 
 exports.data = newData;

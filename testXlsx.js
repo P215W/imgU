@@ -1,8 +1,13 @@
 const xlsx = require("xlsx");
 const callMethod = require("./caller.js");
 
+// const pathToSheetForAssetCreation = "./Assets/testXlsxAfterImageDownload_short.xlsx";
+// const worksheetName = "Tabellenblatt1";
+const pathToSheetForAssetCreation = "./Assets/testXlsx_useForAssetCreation_FilledGaps.xlsx";
+const worksheetName = "Sheet for asset creation";
+
 // GET SHEET AND TRANSFORM IT TO JSON (ONE ARRAY OF OBJECTS):
-const sheet = xlsx.readFile("./Assets/testXlsxAfterImageDownload_short.xlsx").Sheets["Tabellenblatt1"];
+const sheet = xlsx.readFile(`${pathToSheetForAssetCreation}`).Sheets[`${worksheetName}`];
 console.log("[testXlsx.js]: original sheet: ", sheet);
 const originalData = xlsx.utils.sheet_to_json(sheet);
 

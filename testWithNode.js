@@ -35,7 +35,7 @@ async function wrapItAll(a, b, processId, localImagePath) {
 
   await Promise.all([
     page.click('[href="/ly_media_asset"]'),
-    page.waitForNavigation(),
+    page.waitForNavigation(), // test change
   ]);
 
   await Promise.all([

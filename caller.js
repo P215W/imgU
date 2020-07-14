@@ -25,7 +25,8 @@ async function processData(obj) {
     // }
     // await wrapFunc.data(tableObj[item].title, tableObj[item].formatType);
     try {
-      await wrapFunc.data(item.title, item.formatType, item.processId);
+      // await wrapFunc.data(item.title, item.formatType, item.processId);
+      await wrapFunc.data(item.title, item.formatType, item.processId, item.localImagePath);
       console.log(
         `[caller.js] --- Successfully created asset for asset title ${item.title} and processId ${item.processId} ---`
       );

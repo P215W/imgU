@@ -1,6 +1,6 @@
 const puppeteer = require("puppeteer");
 
-async function wrapItAll(a, b, processId) {
+async function wrapItAll(a, b, processId, localImagePath) {
   // const variableTitle = process.argv[2];
   const variableTitle = a;
   if (!variableTitle) {
@@ -28,8 +28,8 @@ async function wrapItAll(a, b, processId) {
   // for testing via labamboss
   await page.goto("https://ribosom.labamboss.com/");
 
-  await page.type("#signin_username", "");
-  await page.type("#signin_password", "");
+  await page.type("#signin_username", ""); // cred
+  await page.type("#signin_password", ""); // cred
 
   await Promise.all([page.click("tfoot input"), page.waitForNavigation()]);
 
@@ -62,8 +62,8 @@ async function wrapItAll(a, b, processId) {
       page.click("#ly_media_asset_filename"), // button that triggers file selection
     ]);
 
-    // await fileChooser.accept(['/tmp/myfile.pdf']);
-    await fileChooser.accept(["./Assets/test123.svg"]);
+    // await fileChooser.accept(["./Assets/test123.svg"]);
+    await fileChooser.accept([`${localImagePath}`]);
   } catch (err) {
     throw new Error(`Error at file picker: ${err}`);
   }
@@ -78,6 +78,8 @@ async function wrapItAll(a, b, processId) {
   }
 
   await page.screenshot({ path: "screenshot.png" });
+  // GET THE NEWLY CREATED ASSETS URL:
+  console.log("NEWLY CREATED ASSET URL: ", page.url());
 
   try {
     await browser.close();

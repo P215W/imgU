@@ -32,4 +32,4 @@ if (imageIndexAtLastSuccess !== undefined || null) {
 const data = dataDownTheLine || originalData;
 console.log("[testXlsx.js] data: ", data);
 
-callMethod.data(data);
+// callMethod.data(data); // we dont call it here, since we arlready call it from getImages.js

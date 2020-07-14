@@ -1,55 +1,59 @@
 const xlsx = require("xlsx");
-const puppeteer = require('puppeteer');
+const fs = require("fs");
+const requestmodule = require("request");
+const callMethod = require("./caller.js");
 
-// parse sheet part:
-const sheet = xlsx.readFile("./Assets/vimeoLinks.xlsx").Sheets["Tabellenblatt1"];
+// NODE IMAGE CRAWLER FUNCTION:
+const download = function (uri, filename, callback) {
+  requestmodule.head(uri, function (err, res, body) {
+    console.log("content-type:", res.headers["content-type"]);
+    console.log("content-length:", res.headers["content-length"]);
 
-const addressOfCell = 'G12';
-
-const desiredCell = sheet[addressOfCell];
-
-const desiredValue = desiredCell ? desiredCell.v : undefinded;
-
-console.log(desiredValue);
-
-// // access url and pup part:
-// (async () => {
-//   const browser = await puppeteer.launch({headless: false});
-//   const page = await browser.newPage();
-//   await page.goto(`${desiredValue}`);
-//   // other actions...
-//   await page.keyboard.down('Control');
-//   await page.keyboard.press('KeyS');
-//   await page.keyboard.up('Control');
-
-
-//   await page.screenshot({ path: "screenshotImage.png" });
-//   await browser.close();
-// })();
-
-// for pup. alternatively node image crawler part:
-var fs = require('fs');
-var requestmodule = require('request');
-
-var download = function(uri, filename, callback){
-  requestmodule.head(uri, function(err, res, body){
-    console.log('content-type:', res.headers['content-type']);
-    console.log('content-length:', res.headers['content-length']);
-
-    requestmodule(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
+    requestmodule(uri)
+      .pipe(fs.createWriteStream(filename))
+      .on("close", callback);
   });
 };
 
-// download('https://www.google.com/images/srpr/logo3w.png', 'C:/Users/Marc/imageUploadAutomation/Assets/google.png', function(){
-//   console.log('done');
+// PARSE SHEET:
+const sheet = xlsx.readFile("./Assets/testXlsx.xlsx").Sheets["Sheet1"];
+const sheetJSON = xlsx.utils.sheet_to_json(sheet);
+console.log("originalData: ", sheetJSON);
+
+//  LOOP THROUGH ALL ROWS (blank rows are ignored by default) TO GET EACH IMAGE-URL and call download function with url:
+const tableElementsWithMissingImageUrl = [];
+// sheetJSON.forEach(item => {
+//     if (item.imageUrl) {
+//       download(
+//         `${item.imageUrl}`,
+//         `C:/Users/Marc/imageUploadAutomation/Assets/${item.title}_processID${item.processId}.jpg`,
+//         function () {
+//           console.log(`Done with ${item.title}`);
+//         }
+//       );
+//     } else {
+//       tableElementsWithMissingImageUrl.push(item);
+//     }
 // });
 
-// works down HERE!!!
-// download('https://i.vimeocdn.com/video/734647815.jpg', 'C:/Users/Marc/imageUploadAutomation/Assets/google3.jpg', function(){
-//   console.log('done');
-// });
-download(`${desiredValue}`, 'C:/Users/Marc/imageUploadAutomation/Assets/google444.jpg', function(){
-  console.log('done');
+const newData = sheetJSON.map(item => {
+  if (item.imageUrl) {
+    download(
+      `${item.imageUrl}`,
+      `C:/Users/Marc/imageUploadAutomation/Assets/${item.title}_processID${item.processId}.jpg`,
+      function () {
+        console.log(`Done with ${item.title}`);
+      }
+    );
+    item.localImagePath = `C:/Users/Marc/imageUploadAutomation/Assets/${item.title}_processID${item.processId}.jpg`;
+  } else {
+    tableElementsWithMissingImageUrl.push(item);
+  }
+  return item;
 });
+console.log("newData: ", newData);
+console.log("Error Array: ", tableElementsWithMissingImageUrl);
 
+callMethod.data(newData);
 
+exports.data = newData;
